@@ -32,11 +32,22 @@ async function main() {
     deployedContracts.WETH9 = WETH9;
     console.log("\nUsing WETH9 at:", WETH9);
 
+    console.log("\nDeploying NFTDescriptor Library...");
+    const NFTDescriptor = await ethers.getContractFactory("NFTDescriptor");
+    const nftDescriptor = await NFTDescriptor.deploy();
+    await nftDescriptor.deployed();
+    console.log("NFTDescriptor lib deployed to:", nftDescriptor.address);
+
     // 4. Deploy NonfungibleTokenPositionDescriptor
     // This contract handles the NFT metadata for liquidity positions
     console.log("\nDeploying NonfungibleTokenPositionDescriptor...");
     const NonfungibleTokenPositionDescriptor = await ethers.getContractFactory(
-        "NonfungibleTokenPositionDescriptor"
+        "NonfungibleTokenPositionDescriptor",
+        {
+            libraries: {
+                NFTDescriptor: nftDescriptor.address, // Linking the deployed library
+            },
+        }
     );
     const positionDescriptor = await NonfungibleTokenPositionDescriptor.deploy(
         WETH9,
@@ -76,15 +87,15 @@ async function main() {
 
     // 7. Deploy Quoter
     // This contract is used to get quotes for trades
-    console.log("\nDeploying QuoterV2...");
-    const Quoter = await ethers.getContractFactory("QuoterV2");
-    const quoter = await Quoter.deploy(
-        factory.address,
-        WETH9
-    );
-    await quoter.deployed();
-    deployedContracts.quoter = quoter.address;
-    console.log("QuoterV2 deployed to:", quoter.address);
+    // console.log("\nDeploying QuoterV2...");
+    // const Quoter = await ethers.getContractFactory("QuoterV2");
+    // const quoter = await Quoter.deploy(
+    //     factory.address,
+    //     WETH9
+    // );
+    // await quoter.deployed();
+    // deployedContracts.quoter = quoter.address;
+    // console.log("QuoterV2 deployed to:", quoter.address);
 
     // 8. Deploy TickLens
     // This contract is used to read tick data from pools

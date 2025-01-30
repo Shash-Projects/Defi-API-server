@@ -87,15 +87,15 @@ async function main() {
 
     // 7. Deploy Quoter
     // This contract is used to get quotes for trades
-    // console.log("\nDeploying QuoterV2...");
-    // const Quoter = await ethers.getContractFactory("QuoterV2");
-    // const quoter = await Quoter.deploy(
-    //     factory.address,
-    //     WETH9
-    // );
-    // await quoter.deployed();
-    // deployedContracts.quoter = quoter.address;
-    // console.log("QuoterV2 deployed to:", quoter.address);
+    console.log("\nDeploying QuoterV2...");
+    const Quoter = await ethers.getContractFactory("QuoterV2");
+    const quoter = await Quoter.deploy(
+        factory.address,
+        WETH9
+    );
+    await quoter.deployed();
+    deployedContracts.quoter = quoter.address;
+    console.log("QuoterV2 deployed to:", quoter.address);
 
     // 8. Deploy TickLens
     // This contract is used to read tick data from pools
@@ -105,6 +105,21 @@ async function main() {
     await tickLens.deployed();
     deployedContracts.tickLens = tickLens.address;
     console.log("TickLens deployed to:", tickLens.address);
+
+    // ------------------------------
+    console.log("\nDeploying testTokens...");
+    const MockERC20 = await ethers.getContractFactory("MockERC20");
+    const tokenA = await MockERC20.deploy("tokenA", "A");
+    await tokenA.deployed();
+    deployedContracts.tokenA = tokenA.address;
+    console.log("tokenA deployed to:", tokenA.address)
+
+    //---------------------------
+    console.log("\nDeploying testTokens...");
+    const tokenB = await MockERC20.deploy("tokenB", "B");
+    await tokenB.deployed();
+    deployedContracts.tokenB = tokenB.address;
+    console.log("tokenB deployed to:", tokenB.address)
 
     // Save deployment addresses
     const fs = require('fs');
